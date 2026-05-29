@@ -20,15 +20,25 @@ Secrets must be set with `wrangler secret put` and must not be committed. Do not
 
 Cloudflare R2 will store uploaded files. Cloudflare D1 will store metadata.
 
-## Worker commands
+## Backend setup
 
-From `worker/`:
+From Windows Command Prompt:
 
-```sh
+```bat
+cd /d "%USERPROFILE%\careers10ai\worker"
 npm install
-npm run dev
-npm run deploy
-npm run db:schema
+npx wrangler d1 execute careers10ai-db --remote --file=./schema.sql
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put SESSION_SECRET
+npx wrangler deploy
 ```
 
-Copy `wrangler.toml.example` to `wrangler.toml` for local deployment configuration, then replace placeholders locally.
+Copy `wrangler.toml.example` to `wrangler.toml` for local deployment configuration, then replace placeholders locally. The local `worker/wrangler.toml` file is intentionally gitignored.
+
+The Worker expects these bindings:
+
+- `DB` for Cloudflare D1 metadata.
+- `CAREERS_FILES` for Cloudflare R2 file storage.
+- `ADMIN_PASSWORD` set with `wrangler secret put`.
+- `SESSION_SECRET` set with `wrangler secret put`.
+- `ALLOWED_ORIGINS` configured in Wrangler vars.

@@ -1,12 +1,15 @@
-name = "careers10ai-worker"
+name = "careers10ai"
 main = "src/index.ts"
 compatibility_date = "2026-05-28"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "careers10ai-db"
-database_id = "replace-with-d1-database-id"
+database_id = "PASTE_DATABASE_ID_HERE"
 
 [[r2_buckets]]
-binding = "FILES"
-bucket_name = "replace-with-r2-bucket-name"
+binding = "CAREERS_FILES"
+bucket_name = "careers10ai-files"
+
+[vars]
+ALLOWED_ORIGINS = "https://jlsp124.github.io,https://jlsp124.github.io/careers10ai,http://localhost:8787,http://localhost:5173"
