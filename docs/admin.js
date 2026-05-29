@@ -1,4 +1,4 @@
-const API_BASE = "https://careers10ai.YOUR-SUBDOMAIN.workers.dev";
+const API_BASE = "https://careers10ai.jlsp124waitlist2026x7.workers.dev";
 // Frontend API config: replace only this value after the Worker is deployed.
 
 const ADMIN_PASSWORD_KEY = "careers10ai.adminPassword";

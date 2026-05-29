@@ -20,7 +20,7 @@ Before publishing the frontend, update the `API_BASE` value at the top of both f
 Use the deployed Worker URL, for example:
 
 ```js
-const API_BASE = "https://careers10ai.YOUR-SUBDOMAIN.workers.dev";
+const API_BASE = "https://careers10ai.jlsp124waitlist2026x7.workers.dev";
 ```
 
 ## Backend
