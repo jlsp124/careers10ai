@@ -1,0 +1,12 @@
+name = "careers10ai-worker"
+main = "src/index.ts"
+compatibility_date = "2026-05-28"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "careers10ai-db"
+database_id = "replace-with-d1-database-id"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "replace-with-r2-bucket-name"

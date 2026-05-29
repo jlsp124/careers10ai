@@ -1,0 +1,2 @@
+-- Placeholder schema for Cloudflare D1 metadata.
+-- Add tables here when backend metadata requirements are defined.
