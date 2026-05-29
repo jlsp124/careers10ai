@@ -79,7 +79,7 @@ function renderAdminRequestList() {
   }
 
   filtered.forEach((request) => {
-    const card = element("article", "request-card");
+    const card = element("article", `request-card${request.id === adminState.selectedId ? " active" : ""}`);
     const header = element("div", "request-card-header");
     const title = element("div", "request-title");
     title.append(
@@ -96,7 +96,7 @@ function renderAdminRequestList() {
     const counts = element(
       "p",
       "muted",
-      `${request.inputFileCount || 0} input files | ${request.outputFileCount || 0} output files`
+      `${request.inputFileCount || 0} inputs | ${request.outputFileCount || 0} outputs`
     );
     const footer = element("div", "request-card-footer");
     const button = element("button", "button secondary", "Open/manage");
@@ -144,7 +144,7 @@ function renderAdminDetail(data) {
     detailItem("Student", `${user.realName || "Student"} (${user.username || "username"})`),
     detailItem("Created", formatDate(request.createdAt)),
     detailItem("Updated", formatDate(request.updatedAt)),
-    detailItem("Instructions", request.instructions, true),
+    detailItem("Instructions", request.instructions, true, "important"),
     detailItem("Requested outputs", request.requestedOutputs || "Not specified", true),
     detailItem("Tone/style", request.tone || "Not specified"),
     detailItem("Student context", request.studentContext || "Not provided", true),
@@ -167,8 +167,7 @@ function renderAdminDetail(data) {
 function promptSection(promptText) {
   const section = element("section", "surface form-stack");
   section.append(
-    element("h2", "", "Generated GPT prompt"),
-    element("p", "muted", "Copy this prompt and use it with the uploaded files outside this app.")
+    sectionHeading("Generated GPT prompt", "Copy this prompt and use it with the uploaded files outside this app.")
   );
   const textarea = element("textarea", "copy-box");
   textarea.readOnly = true;
@@ -178,11 +177,14 @@ function promptSection(promptText) {
   const button = element("button", "button primary", "Copy GPT prompt");
   button.type = "button";
   button.addEventListener("click", async () => {
+    const resetButton = setLoading(button, "Copying...");
     try {
       await copyText(promptText, textarea);
       showMessage("adminMessage", "GPT prompt copied.", "success");
     } catch (error) {
       showMessage("adminMessage", error.message, "error");
+    } finally {
+      resetButton();
     }
   });
   section.append(button);
@@ -191,7 +193,7 @@ function promptSection(promptText) {
 
 function manageSection(request) {
   const section = element("section", "surface form-stack");
-  section.append(element("h2", "", "Manage request"));
+  section.append(sectionHeading("Manage request", "Update the status and leave a clear note for the student when needed."));
 
   const statusLabel = element("label");
   statusLabel.append(element("span", "", "Status"));
@@ -278,8 +280,7 @@ function manageSection(request) {
 function outputUploadSection(requestId) {
   const section = element("section", "surface form-stack");
   section.append(
-    element("h2", "", "Upload finished files"),
-    element("p", "muted", "Add one or more output files. Uploading sets the request status to ready.")
+    sectionHeading("Upload finished files", "Add one or more output files. Uploading sets the request status to ready.")
   );
 
   const fileLabel = element("label");
@@ -287,6 +288,7 @@ function outputUploadSection(requestId) {
   const fileInput = element("input");
   fileInput.type = "file";
   fileInput.multiple = true;
+  fileLabel.append(element("small", "field-hint", "Allowed file types follow the same upload rules as student inputs. Keep output files named clearly."));
   fileLabel.append(fileInput);
 
   const notes = element("div", "file-note-list");
@@ -338,7 +340,7 @@ async function refreshAdminAfterChange(requestId) {
 
 function fileSection(title, files, onDownload) {
   const section = element("section", "surface detail-stack");
-  section.append(element("h2", "", title));
+  section.append(sectionHeading(title, files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : "No files yet"));
 
   if (!files.length) {
     section.append(element("p", "muted", "No files yet."));
@@ -370,7 +372,7 @@ function renderFileNoteInputs(container, files) {
 
   files.forEach((file, index) => {
     const label = element("label");
-    label.append(element("span", "", `Optional note for ${file.name}`));
+    label.append(element("span", "", `Optional note for ${file.name} (${formatBytes(file.size)})`));
     const input = element("input");
     input.type = "text";
     input.name = "fileNotes[]";
@@ -515,10 +517,22 @@ function element(tag, className = "", text = "") {
   return node;
 }
 
-function detailItem(label, value, full = false) {
-  const item = element("div", `detail-item${full ? " full" : ""}`);
+function detailItem(label, value, full = false, extraClass = "") {
+  const className = ["detail-item", full ? "full" : "", extraClass].filter(Boolean).join(" ");
+  const item = element("div", className);
   item.append(element("span", "", label), element("p", "", value || "Not provided"));
   return item;
+}
+
+function sectionHeading(title, meta = "") {
+  const heading = element("div", "section-heading");
+  const copy = element("div");
+  copy.append(element("h2", "", title));
+  if (meta) {
+    copy.append(element("p", "", meta));
+  }
+  heading.append(copy);
+  return heading;
 }
 
 function statusBadge(status) {
@@ -586,6 +600,10 @@ function clearMessage(id) {
 }
 
 function setLoading(button, label) {
+  if (!button) {
+    return () => {};
+  }
+
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = label;

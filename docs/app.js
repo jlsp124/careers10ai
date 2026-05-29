@@ -3,6 +3,26 @@ const API_BASE = "https://careers10ai.YOUR-SUBDOMAIN.workers.dev";
 
 const STUDENT_TOKEN_KEY = "careers10ai.studentToken";
 const STUDENT_USER_KEY = "careers10ai.studentUser";
+const LOGIN_MESSAGE_KEY = "careers10ai.loginMessage";
+const MAX_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 75 * 1024 * 1024;
+const MAX_FILE_COUNT = 10;
+const ALLOWED_EXTENSIONS = new Set([
+  "doc",
+  "docx",
+  "pdf",
+  "ppt",
+  "pptx",
+  "xls",
+  "xlsx",
+  "txt",
+  "rtf",
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
+  "zip"
+]);
 
 document.addEventListener("DOMContentLoaded", () => {
   initLogoutButtons();
@@ -22,6 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
 function initLoginPage() {
   const registerForm = byId("registerForm");
   const loginForm = byId("loginForm");
+  const loginMessage = sessionStorage.getItem(LOGIN_MESSAGE_KEY);
+
+  if (loginMessage) {
+    showMessage("loginMessage", loginMessage);
+    sessionStorage.removeItem(LOGIN_MESSAGE_KEY);
+  }
 
   registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -125,8 +151,9 @@ function initNewRequestForm() {
     clearMessage("requestMessage");
 
     const files = Array.from(fileInput.files || []);
-    if (files.length === 0) {
-      showMessage("requestMessage", "At least one file is required.", "error");
+    const fileError = validateSelectedFiles(files);
+    if (fileError) {
+      showMessage("requestMessage", fileError, "error");
       return;
     }
 
@@ -198,7 +225,7 @@ function renderStudentRequestList(container, requests) {
 
     const footer = element("div", "request-card-footer");
     footer.append(
-      element("span", "muted", `${request.inputFileCount || 0} input files | ${request.outputFileCount || 0} output files`),
+      element("span", "muted", `${request.inputFileCount || 0} inputs | ${request.outputFileCount || 0} outputs`),
       linkButton(`request.html?id=${encodeURIComponent(request.id)}`, "Open", "secondary")
     );
     card.append(footer);
@@ -223,7 +250,7 @@ function renderRequestDetail(requestId, data) {
 
   const grid = element("div", "detail-grid");
   grid.append(
-    detailItem("Instructions", request.instructions, true),
+    detailItem("Instructions", request.instructions, true, "important"),
     detailItem("Requested outputs", request.requestedOutputs || "Not specified"),
     detailItem("Tone/style", request.tone || "Not specified"),
     detailItem("Student context", request.studentContext || "Not provided", true),
@@ -246,7 +273,7 @@ function renderRequestDetail(requestId, data) {
 
 function fileSection(title, files, onDownload) {
   const section = element("section", "surface detail-stack");
-  section.append(element("h2", "", title));
+  section.append(sectionHeading(title, files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : "No files yet"));
 
   if (!files.length) {
     section.append(element("p", "muted", "No files yet."));
@@ -316,9 +343,13 @@ function reopenSection(requestId) {
 function renderFileNoteInputs(container, files) {
   clearElement(container);
 
+  if (files.length > 0) {
+    container.append(element("p", "field-hint", "Optional notes help the admin understand what each upload is for."));
+  }
+
   files.forEach((file, index) => {
     const label = element("label");
-    label.append(element("span", "", `Optional note for ${file.name}`));
+    label.append(element("span", "", `Optional note for ${file.name} (${formatBytes(file.size)})`));
     const input = element("input");
     input.type = "text";
     input.name = "fileNotes[]";
@@ -350,6 +381,7 @@ async function apiFetch(path, options = {}) {
   if (options.auth !== false) {
     const token = localStorage.getItem(STUDENT_TOKEN_KEY);
     if (!token) {
+      sessionStorage.setItem(LOGIN_MESSAGE_KEY, "Log in to continue.");
       throw new Error("Please log in first.");
     }
     headers.set("Authorization", `Bearer ${token}`);
@@ -445,6 +477,7 @@ function requireStudentSession() {
   const user = getStoredUser();
 
   if (!token || !user) {
+    sessionStorage.setItem(LOGIN_MESSAGE_KEY, "Log in to continue.");
     window.location.href = "login.html";
     return null;
   }
@@ -499,10 +532,22 @@ function linkButton(href, text, tone = "secondary") {
   return link;
 }
 
-function detailItem(label, value, full = false) {
-  const item = element("div", `detail-item${full ? " full" : ""}`);
+function detailItem(label, value, full = false, extraClass = "") {
+  const className = ["detail-item", full ? "full" : "", extraClass].filter(Boolean).join(" ");
+  const item = element("div", className);
   item.append(element("span", "", label), element("p", "", value || "Not provided"));
   return item;
+}
+
+function sectionHeading(title, meta = "") {
+  const heading = element("div", "section-heading");
+  const copy = element("div");
+  copy.append(element("h2", "", title));
+  if (meta) {
+    copy.append(element("p", "", meta));
+  }
+  heading.append(copy);
+  return heading;
 }
 
 function statusBadge(status) {
@@ -576,6 +621,10 @@ function clearMessage(id) {
 }
 
 function setLoading(button, label) {
+  if (!button) {
+    return () => {};
+  }
+
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = label;
@@ -591,4 +640,33 @@ function renderEmpty(container, title, text) {
   const empty = element("div", "empty-state");
   empty.append(element("h2", "", title), element("p", "", text));
   container.append(empty);
+}
+
+function validateSelectedFiles(files) {
+  if (files.length === 0) {
+    return "At least one file is required.";
+  }
+
+  if (files.length > MAX_FILE_COUNT) {
+    return `Upload ${MAX_FILE_COUNT} files or fewer.`;
+  }
+
+  let totalBytes = 0;
+  for (const file of files) {
+    totalBytes += file.size;
+    if (file.size > MAX_FILE_BYTES) {
+      return `${file.name} is larger than 25 MB.`;
+    }
+
+    const extension = file.name.split(".").pop().toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(extension)) {
+      return `${file.name} is not an allowed file type.`;
+    }
+  }
+
+  if (totalBytes > MAX_TOTAL_BYTES) {
+    return "Total upload size must be 75 MB or less.";
+  }
+
+  return "";
 }

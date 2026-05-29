@@ -21,13 +21,14 @@
       <section class="page-heading">
         <p class="eyebrow">Admin</p>
         <h1>Request queue</h1>
-        <p>Load student requests, copy the generated prompt, and return finished files through R2-backed uploads.</p>
+        <p>Load student requests, copy the generated support prompt, and return finished files through R2-backed uploads.</p>
       </section>
 
       <section class="surface admin-login-row">
         <label>
           <span>Admin password</span>
           <input id="adminPassword" type="password" autocomplete="current-password">
+          <small class="field-hint">Stored in this browser tab with sessionStorage only.</small>
         </label>
         <button id="loadAdminRequests" class="button primary" type="button">Load requests</button>
       </section>
@@ -58,7 +59,7 @@
         <section id="adminDetail" class="detail-stack" aria-live="polite">
           <div class="empty-state">
             <h2>No request selected</h2>
-            <p>Load the queue, then open a request to manage files and status.</p>
+            <p>Load the queue, then open a request to review details, download inputs, copy the prompt, and upload output files.</p>
           </div>
         </section>
       </section>

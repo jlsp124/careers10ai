@@ -14,7 +14,7 @@
       </a>
       <nav class="top-nav" aria-label="Primary">
         <a href="dashboard.html">My requests</a>
-        <button id="logoutButton" class="text-button" type="button">Logout</button>
+        <button id="logoutButton" class="button secondary nav-button" type="button">Log out</button>
       </nav>
     </header>
 
@@ -37,6 +37,7 @@
           <label>
             <span>Instructions</span>
             <textarea name="instructions" rows="7" required></textarea>
+            <small class="field-hint">Be specific about what to organize, format, edit, or prepare. Include what should be left for you to personalize.</small>
           </label>
 
           <div class="helper-box">
@@ -62,6 +63,7 @@
           <label>
             <span>Upload files</span>
             <input id="requestFiles" name="files[]" type="file" multiple required>
+            <small class="field-hint">Allowed: DOC, DOCX, PDF, PPT, PPTX, XLS, XLSX, TXT, RTF, PNG, JPG, JPEG, WEBP, ZIP. Max 25 MB each, 10 files, 75 MB total.</small>
           </label>
           <div id="fileNotes" class="file-note-list"></div>
 
