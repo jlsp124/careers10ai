@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request - Careers AI Desk</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body data-page="request">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">C10</span>
+        <span>Careers AI Desk</span>
+      </a>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="dashboard.html">My requests</a>
+        <button id="logoutButton" class="text-button" type="button">Logout</button>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      <div id="requestMessage" class="message" hidden></div>
+
+      <section id="newRequestView" hidden>
+        <div class="page-heading">
+          <p class="eyebrow">New request</p>
+          <h1>Send files and instructions</h1>
+          <p>Upload the files your helper should use, then explain what kind of organized file help you want back.</p>
+        </div>
+
+        <form id="requestForm" class="surface form-stack wide-form">
+          <label>
+            <span>Assignment title</span>
+            <input name="assignmentTitle" type="text" required>
+          </label>
+
+          <label>
+            <span>Instructions</span>
+            <textarea name="instructions" rows="7" required></textarea>
+          </label>
+
+          <div class="helper-box">
+            <p><strong>Bad prompt:</strong> "Do this assignment."</p>
+            <p><strong>Better prompt:</strong> "Use my attached worksheet and notes to help organize my answer. Keep it in a normal Grade 10 tone. I need a DOCX back. If anything needs my personal opinion, leave a note."</p>
+          </div>
+
+          <label>
+            <span>Requested output files / what do you want back?</span>
+            <textarea name="requestedOutputs" rows="3"></textarea>
+          </label>
+
+          <label>
+            <span>Tone/style</span>
+            <input name="tone" type="text" placeholder="Normal Grade 10 tone, clear, organized">
+          </label>
+
+          <label>
+            <span>Student context: what info only you can give?</span>
+            <textarea name="studentContext" rows="4"></textarea>
+          </label>
+
+          <label>
+            <span>Upload files</span>
+            <input id="requestFiles" name="files[]" type="file" multiple required>
+          </label>
+          <div id="fileNotes" class="file-note-list"></div>
+
+          <label class="check-row">
+            <input name="reviewCheckbox" type="checkbox" value="true" required>
+            <span>I will read over the finished work before submitting it.</span>
+          </label>
+          <label class="check-row">
+            <input name="responsibilityCheckbox" type="checkbox" value="true" required>
+            <span>I understand I am responsible for following my class rules.</span>
+          </label>
+
+          <button class="button primary" type="submit">Submit request</button>
+        </form>
+      </section>
+
+      <section id="requestDetailView" hidden>
+        <div class="toolbar-row">
+          <div>
+            <p class="eyebrow">Request detail</p>
+            <h1 id="detailTitle">Request</h1>
+            <p id="detailMeta" class="muted"></p>
+          </div>
+          <a class="button secondary" href="dashboard.html">Back to dashboard</a>
+        </div>
+
+        <div id="requestDetail" class="detail-stack" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

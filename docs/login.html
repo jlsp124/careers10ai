@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in - Careers AI Desk</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body data-page="login">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">C10</span>
+        <span>Careers AI Desk</span>
+      </a>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="dashboard.html">My requests</a>
+        <a href="request.html">New request</a>
+      </nav>
+    </header>
+
+    <main class="page-shell narrow">
+      <section class="page-heading">
+        <p class="eyebrow">Student access</p>
+        <h1>Log in or create an account</h1>
+        <p>Use a simple username and passcode to return to your own requests and finished files.</p>
+      </section>
+
+      <div id="loginMessage" class="message" hidden></div>
+
+      <section class="split-grid">
+        <form id="registerForm" class="surface form-stack">
+          <div>
+            <h2>Create account</h2>
+            <p class="muted">Start a private student workspace for your request history.</p>
+          </div>
+          <label>
+            <span>Real name</span>
+            <input name="realName" type="text" autocomplete="name" required>
+          </label>
+          <label>
+            <span>Username</span>
+            <input name="username" type="text" autocomplete="username" required>
+          </label>
+          <label>
+            <span>Passcode</span>
+            <input name="passcode" type="password" autocomplete="new-password" minlength="4" required>
+          </label>
+          <button class="button primary" type="submit">Create account</button>
+        </form>
+
+        <form id="loginForm" class="surface form-stack">
+          <div>
+            <h2>Log in</h2>
+            <p class="muted">Open your dashboard and download finished files.</p>
+          </div>
+          <label>
+            <span>Username</span>
+            <input name="username" type="text" autocomplete="username" required>
+          </label>
+          <label>
+            <span>Passcode</span>
+            <input name="passcode" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="button primary" type="submit">Log in</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

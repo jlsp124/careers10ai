@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My requests - Careers AI Desk</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body data-page="dashboard">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">C10</span>
+        <span>Careers AI Desk</span>
+      </a>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="request.html">New request</a>
+        <button id="logoutButton" class="text-button" type="button">Logout</button>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      <section class="toolbar-row">
+        <div>
+          <p class="eyebrow">Student dashboard</p>
+          <h1>My requests</h1>
+          <p id="welcomeName" class="muted">Loading your workspace...</p>
+        </div>
+        <a class="button primary" href="request.html">New request</a>
+      </section>
+
+      <div id="dashboardMessage" class="message" hidden></div>
+      <section id="requestList" class="request-list" aria-live="polite"></section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
