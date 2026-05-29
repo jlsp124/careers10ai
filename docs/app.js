@@ -1,5 +1,5 @@
 const API_BASE = "https://careers10ai.YOUR-SUBDOMAIN.workers.dev";
-// Change API_BASE above when the Worker URL is known.
+// Frontend API config: replace only this value after the Worker is deployed.
 
 const STUDENT_TOKEN_KEY = "careers10ai.studentToken";
 const STUDENT_USER_KEY = "careers10ai.studentUser";
@@ -398,7 +398,7 @@ async function apiFetch(path, options = {}) {
   try {
     response = await fetch(apiUrl(path), requestOptions);
   } catch {
-    throw new Error("Could not reach the backend. Check API_BASE in docs/app.js.");
+    throw new Error("Could not reach the backend. Check the Worker URL at the top of docs/app.js.");
   }
 
   const data = await readJsonResponse(response);
@@ -423,7 +423,7 @@ async function downloadWithAuth(path, filename) {
       }
     });
   } catch {
-    throw new Error("Could not reach the backend. Check API_BASE in docs/app.js.");
+    throw new Error("Could not reach the backend. Check the Worker URL at the top of docs/app.js.");
   }
 
   if (!response.ok) {

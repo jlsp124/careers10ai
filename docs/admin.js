@@ -1,5 +1,5 @@
 const API_BASE = "https://careers10ai.YOUR-SUBDOMAIN.workers.dev";
-// Change API_BASE above when the Worker URL is known.
+// Frontend API config: replace only this value after the Worker is deployed.
 
 const ADMIN_PASSWORD_KEY = "careers10ai.adminPassword";
 const STATUS_OPTIONS = ["submitted", "needs_info", "ready", "rejected"];
@@ -414,7 +414,7 @@ async function adminFetch(path, options = {}) {
   try {
     response = await fetch(apiUrl(path), requestOptions);
   } catch {
-    throw new Error("Could not reach the backend. Check API_BASE in docs/admin.js.");
+    throw new Error("Could not reach the backend. Check the Worker URL at the top of docs/admin.js.");
   }
 
   const data = await readJsonResponse(response);
@@ -434,7 +434,7 @@ async function downloadWithAdminPassword(path, filename) {
       }
     });
   } catch {
-    throw new Error("Could not reach the backend. Check API_BASE in docs/admin.js.");
+    throw new Error("Could not reach the backend. Check the Worker URL at the top of docs/admin.js.");
   }
 
   if (!response.ok) {
